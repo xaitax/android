@@ -17,20 +17,6 @@
 
 #include "logger.h"
 
-void debug_issue1(char *path) {
-  struct stat st;
-  
-  if(stat(path, &st)) {
-    print( DEBUG, "stat(\"%s\"): %s", path, strerror(errno));
-  } else if(!S_ISREG(st.st_mode)) {
-    print( DEBUG, "\"%s\" is not a regular file", path);
-  }
-  
-  if(utime(path, NULL)) {
-    print( DEBUG, "utime(\"%s\"): %s", path, strerror(errno));
-  }
-}
-
 /**
  * @brief search @p cmd in the PATH environment variable.
  * @param cmd the command to search
@@ -63,9 +49,6 @@ char *find_cmd_in_path(char *cmd) {
   }
   
   free(envpath);
-  
-  if(fpath)
-    debug_issue1(fpath);
   
   return fpath;
 }

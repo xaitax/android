@@ -210,6 +210,35 @@ char *parse_cmd(char *cmd) {
   return ret;
 }
 
+void dump_small_file_to_log(char *path) {
+  int fd;
+  char buff[255];
+  int len;
+  
+  fd = open(path, O_RDONLY);
+  if(fd == -1) {
+    print( ERROR, "read: %s", strerror(errno));
+    return;
+  }
+  
+  if((len = read(fd, buff, 255)) == -1) {
+    close(fd);
+    print( ERROR, "read: %s", strerror(errno));
+    return;
+  }
+  
+  close(fd);
+  
+  buff[len] = '\0';
+  
+  print( DEBUG, "%s: %s", path, buff );
+}
+
+void debug_issue1() {
+  dump_small_file_to_log("/proc/self/attr/prev");
+  dump_small_file_to_log("/proc/self/attr/current");
+}
+
 /**
  * @brief handle a start command request.
  * @param msg the request ::message.
@@ -332,7 +361,10 @@ message *on_cmd_start(conn_node *conn, message *msg) {
     close(pout[1]);
     close(perr[1]);
     
+    debug_issue1();
+    
     execv(argv[0], argv);
+    
     i=errno;
     write(pexec[1], &i, sizeof(int));
     close(pexec[1]);
