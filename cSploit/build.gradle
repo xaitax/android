@@ -100,4 +100,10 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+    
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }    
+    
 }
